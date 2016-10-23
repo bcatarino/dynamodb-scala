@@ -11,6 +11,8 @@ import scala.util.Try
 
 trait Decoder[A] {
   self =>
+
+  // Should name something different that won't be confused with companion object apply
   def apply(c: AttributeValue): A
 
   def apply(name: String, items: Map[String, AttributeValue]): A = {
@@ -59,6 +61,7 @@ object Decoder {
                                           ): Decoder[C[A]] = instance { c =>
     import scala.collection.JavaConversions._
 
+    // more descriptive names. e, c and d make it very hard to read...
     val list = c.getL
     val builder = cbf()
     for {

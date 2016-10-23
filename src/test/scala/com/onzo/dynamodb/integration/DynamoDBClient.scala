@@ -83,6 +83,11 @@ trait DynamoDBClient
 
     val deadline = 10.minutes.fromNow
 
+    // Don't know the api, but this whole block of code is very non-functional and non-reactive. client.describeTable
+    // returns a future, so instead of a while and waiting for a result, why not map the future so that on success.
+    // Besides, using Thread.sleep in a test is definitely not a good idea. The thread will not be doing any work
+    // for 20 seconds and it will prevent other tests from running (assuming they are running in parallel). It will
+    // stall the CI environment more than necessary.
     while (deadline.hasTimeLeft) {
       try {
         val result = await {
@@ -117,6 +122,8 @@ trait DynamoDBClient
           client.describeTable(tableName)
         }
 
+        // Same as above. This should be handled in a more functional way. No reason why a while or a return need to
+        // exist here.
         val description = result.getTable
         if (description.getTableStatus == TableStatus.ACTIVE.toString)
           return description

@@ -23,10 +23,12 @@ trait EqInstances {
 
 trait DynamoDBSuite extends FunSuite with Matchers with Discipline with AllInstances with AllSyntax
 with ArbitraryInstances with EqInstances {
+  // Unimplemented code: can be removed?
   override def convertToEqualizer[T](left: T): Equalizer[T] = ???
 }
 
 class AnyValCodecSuite extends DynamoDBSuite {
+  // Commented code: can be removed?
   //checkAll("Codec[Unit]", CodecTests[Unit].codec)
   checkAll("Codec[Boolean]", CodecTests[Boolean].codec)
   //checkAll("Codec[Char]", CodecTests[Char].codec)

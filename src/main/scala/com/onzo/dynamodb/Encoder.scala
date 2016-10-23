@@ -7,8 +7,10 @@ import scala.collection.generic.IsTraversableOnce
 
 trait Encoder[A] {
   //self =>
+  // Rename apply to encode or something else, as apply is easily confused with the typical companion object apply method
   def apply(a: A): AttributeValue
 
+  // Rename apply to encode or something else, as apply is easily confused with the typical companion object apply method
   def apply(name: String, a: A): Map[String, AttributeValue] = {
     Map(name -> apply(a))
   }
@@ -17,8 +19,12 @@ trait Encoder[A] {
 }
 
 object Encoder {
+  // I don't understand why this method exists. The whole point of an apply method is creating a new instance. If we are
+  // returning an already existing instance, this method is not needed and can be deleted.
   def apply[A](implicit e: Encoder[A]): Encoder[A] = e
 
+  // It would be good to have parameter names more descriptive than 'f' or 'a'. This is generic to the code in general,
+  // not only this particular method
   def instance[A](f: A => AttributeValue): Encoder[A] = new Encoder[A] {
     def apply(a: A): AttributeValue = f(a)
   }
@@ -28,9 +34,12 @@ object Encoder {
                                                is: IsTraversableOnce[C[A0]] {type A = A0}
                                               ): Encoder[C[A0]] =
     instance { list =>
+      // Number of lines could be slightly reduced by mapping the original list to a scala collection and convert to
+      // a java collection just right at the end.
       val items = new java.util.ArrayList[AttributeValue]()
 
       is.conversion(list).foreach { a =>
+        // Variables a and functions e make the code very unreadable. I need to scan the code to know e is the encoder.
         items add e(a)
       }
 
@@ -50,11 +59,14 @@ object Encoder {
   implicit val encodeBigDecimal: Encoder[BigDecimal] = instance(a => new AttributeValue().withN(a.toString))
   implicit val encodeUUID: Encoder[UUID] = instance(uuid => new AttributeValue().withS(uuid.toString))
 
+  // Could be a good idea to move the encoders (especially the custom ones) to another object.
   implicit def encodeOption[A](implicit e: Encoder[A]): Encoder[Option[A]] = new Encoder[Option[A]] {
     //self =>
     override def apply(a: Option[A]): AttributeValue = e(a.get)
 
     override def apply(name: String, a: Option[A]): Map[String, AttributeValue] = {
+      // Feels strange that it's checking if an option is defined and then add the option anyway. Shouldn't it add the
+      // value inside the option, when it's defined?
       if(a.isDefined)
         Map(name -> apply(a))
       else

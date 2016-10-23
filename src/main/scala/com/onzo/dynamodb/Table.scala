@@ -8,6 +8,7 @@ abstract class Table[T](override val tableName: String) extends DynamoDBSerializ
 
   val * : TableMapper[T]
 
+  // *.primaryKey.get may return NoSuchElementException, so maybe getOrElse with a default would be more appropriate.
   override def hashAttributeName: String = *.primaryKey.get._1
 
   override def rangeAttributeName: Option[String] = *.rangeKey.map(_._1)

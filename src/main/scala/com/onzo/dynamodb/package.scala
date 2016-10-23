@@ -8,6 +8,8 @@ import shapeless.ops.hlist._
 
 package object dynamodb {
 
+  // Not sure where the symbol λ comes from or what it's doing, but guessing this can become an encoding error (doesn't
+  // compile for me, at least). Can this be replaced with anything else more standard?
   implicit class KeysHList[
   A <: HList : <<:[KeyLike[_]]#λ,
   M <: HList,
@@ -16,6 +18,7 @@ package object dynamodb {
   Primary
   ](a: A) {
 
+    // still needed or should to do be removed as well as the code it refers to?
     // todo remove?
     val optionalRangeKey = RangeKey[Int]("rangeKeyCheat")
 
@@ -36,6 +39,8 @@ package object dynamodb {
 
       val names = a.foldLeft(List.empty[String])(HlistHelper.findAllKeyName)(findAllKeyName)
 
+      // Again, variable and function names are too generic to make the code easy to read.
+      // Could see this as a non-anonymous class, in order to split code a bit more.
       new TableMapper[B] {
         override val primaryKey: Option[(String, Encoder[B])] = {
           Some(_primaryKey.name -> Encoder.instance {

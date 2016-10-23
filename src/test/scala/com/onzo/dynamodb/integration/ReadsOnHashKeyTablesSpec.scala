@@ -42,6 +42,7 @@ class ReadsOnHashKeyTableSpec
     tryCreateTable(Forum.tableRequest)
     awaitTableCreation(Forum.tableName)
 
+    // Specs2 has functionality to test futures without forcing an await. I'm guessing scalatest does as well.
     await(30.seconds) {
       mapper.batchDump(sampleForums)
     }
@@ -75,6 +76,8 @@ class ReadsOnHashKeyTableSpec
   }
 
   it should s"contain the sample forum items" in {
+    // As mentioned before, await shouldn't be needed and a direct map from the future would probably work and be
+    // more appropriate.
     val forumScan = await {
       mapper.scan[Forum]()
     }

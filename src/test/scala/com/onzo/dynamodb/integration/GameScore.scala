@@ -24,6 +24,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 import shapeless.HNil
 
+// Auxiliary test classes should probably be in a separate package
 case class GameScore(
                       userId: String,
                       gameTitle: String,
@@ -84,6 +85,8 @@ object GameScore {
 
     private val fmt = ISODateTimeFormat.dateTime
 
+    // Can't find "as" method. Considering "as" is defined in package com.onzo.dynamodb and this class is
+    // in com.onzo.dynamodb.integration, that might be the reason. But maybe I'm missing something...
     val * : TableMapper[GameScore] = {
       PrimaryKey[String]("UserId") ::
         RangeKey[String]("GameTitle") ::

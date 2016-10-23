@@ -3,6 +3,7 @@ package com.onzo.dynamodb.codec
 import cats.laws._
 import com.onzo.dynamodb.{Encoder, Decoder}
 
+// Classes needed for tests but that are not tests by themselves would be better located in another package.
 trait CodecLaws[A] {
   def decode: Decoder[A]
 

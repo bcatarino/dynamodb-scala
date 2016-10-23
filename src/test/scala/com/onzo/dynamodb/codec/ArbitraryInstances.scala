@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ArbitraryInstances {
+  // Classes needed for tests but that are not tests by themselves would be better located in another package.
   private[this] def genBool: Gen[AttributeValue] = Arbitrary.arbBool.arbitrary.map(new AttributeValue().withBOOL(_))
 
   private[this] def genString: Gen[AttributeValue] = Arbitrary.arbString.arbitrary.map(new AttributeValue().withS(_))
